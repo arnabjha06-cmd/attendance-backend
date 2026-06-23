@@ -4,6 +4,7 @@ import com.attendance.backend.dto.LoginRequest;
 import com.attendance.backend.entity.Employee;
 import com.attendance.backend.repository.EmployeeRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class AuthController {
 
         Map<String, Object> response =
                 new HashMap<>();
+        
 
         if (employee != null) {
 

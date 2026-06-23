@@ -4,6 +4,8 @@ import com.attendance.backend.repository.AttendanceRepository;
 import com.attendance.backend.repository.EmployeeRepository;
 import com.attendance.backend.repository.LeaveRequestRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.attendance.backend.entity.LeaveRequest;
 import org.springframework.web.bind.annotation.PutMapping;
 import com.attendance.backend.entity.Employee;
@@ -149,8 +151,12 @@ public class AdminController {
         employee.setEmail(
                 request.getEmail());
 
+        BCryptPasswordEncoder encoder =
+                new BCryptPasswordEncoder();
+
         employee.setPasswordHash(
-                request.getPassword());
+                encoder.encode(
+                        request.getPassword()));
 
         employee.setRole(
                 request.getRole());
