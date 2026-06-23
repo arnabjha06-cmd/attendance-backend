@@ -5,7 +5,10 @@ import com.attendance.backend.repository.EmployeeRepository;
 import com.attendance.backend.repository.LeaveRequestRepository;
 import org.springframework.web.bind.annotation.*;
 import com.attendance.backend.entity.LeaveRequest;
+import com.attendance.backend.entity.Employee;
+import com.attendance.backend.dto.AddEmployeeRequest;
 import java.util.List;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,7 @@ public class AdminController {
     private final AttendanceRepository attendanceRepository;
     private final LeaveRequestRepository leaveRequestRepository;
 
+
     public AdminController(
             EmployeeRepository employeeRepository,
             AttendanceRepository attendanceRepository,
@@ -26,6 +30,7 @@ public class AdminController {
         this.employeeRepository = employeeRepository;
         this.attendanceRepository = attendanceRepository;
         this.leaveRequestRepository = leaveRequestRepository;
+
     }
 
     @GetMapping("/dashboard")
@@ -41,7 +46,9 @@ public class AdminController {
                 attendanceRepository.count();
 
         long totalLeaves =
-                leaveRequestRepository.count();
+                leaveRequestRepository
+                        .countByStatus("PENDING");
+
 
         response.put(
                 "totalEmployees",
@@ -62,6 +69,7 @@ public class AdminController {
 
         return leaveRequestRepository
                 .findByStatus("PENDING");
+
     }
     @PostMapping("/approve/{id}")
     public Map<String, Object> approveLeave(
@@ -114,6 +122,70 @@ public class AdminController {
         leaveRequestRepository.save(leave);
 
         response.put("success", true);
+
+        return response;
+    }
+    @GetMapping("/employees")
+    public List<Employee> getEmployees() {
+
+        return employeeRepository.findAll();
+    }
+    @PostMapping("/add-employee")
+    public Map<String, Object> addEmployee(
+            @RequestBody AddEmployeeRequest request) {
+
+        Employee employee = new Employee();
+
+        employee.setCompanyId(
+                request.getCompanyId());
+
+        employee.setEmployeeId(
+                request.getEmployeeId());
+
+        employee.setName(
+                request.getName());
+
+        employee.setEmail(
+                request.getEmail());
+
+        employee.setPasswordHash(
+                request.getPassword());
+
+        employee.setRole(
+                request.getRole());
+
+        employeeRepository.save(employee);
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        response.put("success", true);
+        response.put("message",
+                "Employee Added Successfully");
+
+        return response;
+    }
+    @DeleteMapping("/delete-employee/{id}")
+    public Map<String, Object> deleteEmployee(
+            @PathVariable Integer id) {
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        if (!employeeRepository.existsById(id)) {
+
+            response.put("success", false);
+            response.put("message",
+                    "Employee Not Found");
+
+            return response;
+        }
+
+        employeeRepository.deleteById(id);
+
+        response.put("success", true);
+        response.put("message",
+                "Employee Deleted");
 
         return response;
     }

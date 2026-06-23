@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+
 public interface LeaveRequestRepository
         extends JpaRepository<LeaveRequest, Integer> {
 
@@ -13,9 +14,11 @@ public interface LeaveRequestRepository
             Integer employeeId
     );
 
+
     List<LeaveRequest> findByStatus(
             String status
     );
+    long countByStatus(String status);
 
 
 }
