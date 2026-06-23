@@ -5,6 +5,7 @@ import com.attendance.backend.repository.EmployeeRepository;
 import com.attendance.backend.repository.LeaveRequestRepository;
 import org.springframework.web.bind.annotation.*;
 import com.attendance.backend.entity.LeaveRequest;
+import org.springframework.web.bind.annotation.PutMapping;
 import com.attendance.backend.entity.Employee;
 import com.attendance.backend.dto.AddEmployeeRequest;
 import java.util.List;
@@ -186,6 +187,45 @@ public class AdminController {
         response.put("success", true);
         response.put("message",
                 "Employee Deleted");
+
+        return response;
+    }
+    @PutMapping("/update-employee/{id}")
+    public Map<String, Object> updateEmployee(
+            @PathVariable Integer id,
+            @RequestBody Employee request) {
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        Employee employee =
+                employeeRepository
+                        .findById(id)
+                        .orElse(null);
+
+        if(employee == null) {
+
+            response.put("success", false);
+            response.put("message",
+                    "Employee Not Found");
+
+            return response;
+        }
+
+        employee.setName(
+                request.getName());
+
+        employee.setEmail(
+                request.getEmail());
+
+        employee.setRole(
+                request.getRole());
+
+        employeeRepository.save(employee);
+
+        response.put("success", true);
+        response.put("message",
+                "Employee Updated");
 
         return response;
     }
